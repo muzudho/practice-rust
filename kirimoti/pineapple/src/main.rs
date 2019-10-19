@@ -11,25 +11,26 @@
 extern crate csv;
 
 use std::fs;
+use rand::prelude::*;
 
 fn main() {
     /* // Making of -.
-    let mut hiragana = "あいうえお　かきくけこ　さしすせそ　たちつてと　なにぬねの　はひふへほ　まみむめも　やゆよ　わおん
-        がきぐげご　ざじずぜぞ　だぢづでど　ばびぶべぼ　ぱぴぷぺぽ　ゃゅょ　ヴ
-        ぁぃぅぇぉ".to_string();
+    let mut hiragana = "あいうえお　かきくけこ　さしすせそ　たちつてと　なにぬねの　はひふへほ　まみむめも　やゆよ　らりるれろ　わをん
+        がぎぐげご　ざじずぜぞ　だぢづでど　ばびぶべぼ　ぱぴぷぺぽ　ゃゅょ　ヴ
+        ぁぃぅぇぉ　っー".to_string();
     hiragana.retain(|c| c != ' ' && c != '　' && c != '\r' && c != '\n');
     println!("let hiragana = \"{}\".to_string();",hiragana);
     */
-    let hiragana = "あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわおんがきぐげござじずぜぞだぢづでどばびぶべぼぱぴぷぺぽゃゅょヴぁぃぅぇぉっ".to_string();
+    let hiragana = "あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわおんがぎぐげござじずぜぞだぢづでどばびぶべぼぱぴぷぺぽゃゅょヴぁぃぅぇぉっー".to_string();
 
     /* // Making of -.
-    let mut katakana = "アイウエオ　カキクケコ　サシスセソ　タチツテト　ナニヌネノ　ハヒフヘホ　マミムメモ　ヤユヨ　ワオン
+    let mut katakana = "アイウエオ　カキクケコ　サシスセソ　タチツテト　ナニヌネノ　ハヒフヘホ　マミムメモ　ヤユヨ　ラリルレロ　ワヲン
         ガギグゲゴ　ザジズゼゾ　ダヂヅデド　バビブベボ　パピプペポ　ャュョ　ヴ
-        ァィゥェォ".to_string();
+        ァィゥェォ　っ～".to_string();
     katakana.retain(|c| c != ' ' && c != '　' && c != '\r' && c != '\n');
     println!("let katakana = \"{}\".to_string();",katakana);
     */
-    let katakana = "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨワオンガギグゲゴザジズゼゾダヂヅデドバビブベボパピプペポャュョヴァィゥェォッ".to_string();
+    let katakana = "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨワオンガギグゲゴザジズゼゾダヂヅデドバビブベボパピプペポャュョヴァィゥェォッ～".to_string();
 
     let multibyte_hiragana: Vec<char> = hiragana.chars().collect();
     let multibyte_katakana: Vec<char> = katakana.chars().collect();
@@ -74,6 +75,26 @@ fn main() {
     print_table(&multibyte_hiragana, &table);
 
     write_table(&multibyte_hiragana, &table);
+
+    let mut rng = thread_rng();
+    let y = rng.gen_range(0, multibyte_hiragana.len());
+    if let Some(x) = get_x_by_y(&table, y) {
+        println!("{}{}", multibyte_hiragana[x], multibyte_hiragana[y]);
+    } else {
+        println!("該当なし");
+    }
+}
+
+fn get_x_by_y(table:&Vec<Vec<i64>>, index:usize) -> Option<usize> {
+    let is_max = |value, relay| -> bool {
+        relay<value
+    };
+
+    if let Some((hit_index, _value)) = each_cell_type3(&table, index, std::i64::MIN, is_max) {
+        Some(hit_index)
+    } else {
+        None
+    }
 }
 
 fn index_of(ch1:&char, multibyte_hiragana:&Vec<char>, multibyte_katakana:&Vec<char>) -> Option<usize> {
@@ -236,4 +257,19 @@ fn each_cell_type1<F, G, H>(table:&Vec<Vec<i64>>, before_row:F, get_cell:G, afte
 
         after_row(r);
     }
+}
+
+fn each_cell_type3<F>(table:&Vec<Vec<i64>>, index:usize, init_value:i64, callback:F) -> Option<(usize, i64)>
+    where F : Fn(i64, i64) -> bool {
+
+    let mut hit : Option<(usize, i64)> = None;
+    let mut relay = init_value;
+    for column in table[index].iter() {
+        if callback(*column, relay) {
+            relay = *column;
+            hit = Some((index, *column));
+        }
+    }
+
+    hit
 }
