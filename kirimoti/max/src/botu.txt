@@ -1,0 +1,23 @@
+    // 4x4 table. Default 0.
+    // let mut table : [[i32; 4]; 4] = [[0; 4]; 4];
+
+    /*
+    let mut max = std::i32::MIN;
+    for row in table.iter() {
+        for column in row.iter() {
+            if max < *column {
+                max = *column;
+            }
+        }
+    }
+    */
+
+    /*
+    for (r, row) in table.iter().enumerate() {
+        for (c, column) in table[r].iter().enumerate() {
+            if max < table[r][c] {
+                max = table[r][c];
+            }
+        }
+    }
+    */
