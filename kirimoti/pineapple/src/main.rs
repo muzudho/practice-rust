@@ -12,6 +12,7 @@ extern crate csv;
 
 use std::fs;
 use rand::prelude::*;
+use rand::seq::SliceRandom;
 
 fn main() {
     /* // Making of -.
@@ -21,7 +22,7 @@ fn main() {
     hiragana.retain(|c| c != ' ' && c != '　' && c != '\r' && c != '\n');
     println!("let hiragana = \"{}\".to_string();",hiragana);
     */
-    let hiragana = "あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわおんがぎぐげござじずぜぞだぢづでどばびぶべぼぱぴぷぺぽゃゅょヴぁぃぅぇぉっー".to_string();
+    let hiragana = "あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんがぎぐげござじずぜぞだぢづでどばびぶべぼぱぴぷぺぽゃゅょヴぁぃぅぇぉっー".to_string();
 
     /* // Making of -.
     let mut katakana = "アイウエオ　カキクケコ　サシスセソ　タチツテト　ナニヌネノ　ハヒフヘホ　マミムメモ　ヤユヨ　ラリルレロ　ワヲン
@@ -30,7 +31,7 @@ fn main() {
     katakana.retain(|c| c != ' ' && c != '　' && c != '\r' && c != '\n');
     println!("let katakana = \"{}\".to_string();",katakana);
     */
-    let katakana = "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨワオンガギグゲゴザジズゼゾダヂヅデドバビブベボパピプペポャュョヴァィゥェォッ～".to_string();
+    let katakana = "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨワヲンガギグゲゴザジズゼゾダヂヅデドバビブベボパピプペポャュョヴァィゥェォッ～".to_string();
 
     let multibyte_hiragana: Vec<char> = hiragana.chars().collect();
     let multibyte_katakana: Vec<char> = katakana.chars().collect();
@@ -49,6 +50,7 @@ fn main() {
         }
     };
 
+    print!("Learning|");
     let bonus = multibyte_hiragana.len() as i64;
     for (ch1, ch2) in two_kanas_vec {
 
@@ -56,7 +58,8 @@ fn main() {
         let index2 = index_of(&ch2, &multibyte_hiragana, &multibyte_katakana);
         if let Some(y) = index1 {
             if let Some(x) = index2 {
-                println!("{}{} {}{}", ch1, y, ch2, x);
+                // println!("{}{} {}{}", ch1, y, ch2, x);
+                print!(".");
 
                 for r in 0..table.len() {
                     for c in 0..table[r].len() {
@@ -70,6 +73,7 @@ fn main() {
             }
         }
     }
+    println!("Finished.");
 
 
     print_table(&multibyte_hiragana, &table);
@@ -77,20 +81,42 @@ fn main() {
     write_table(&multibyte_hiragana, &table);
 
     let mut rng = thread_rng();
-    let y = rng.gen_range(0, multibyte_hiragana.len());
-    if let Some(x) = get_x_by_y(&table, y) {
-        println!("{}{}", multibyte_hiragana[x], multibyte_hiragana[y]);
-    } else {
-        println!("該当なし");
+    for initial_index in 0..multibyte_hiragana.len() {
+        let mut index1 = initial_index;
+        let word_len = rng.gen_range(2, 18);
+        print!("{}", multibyte_hiragana[index1]);
+        for _i in 0..word_len {
+            if let Some(index2) = get_x_by_y(&table, index1) {
+                print!("{}", multibyte_hiragana[index2]);
+                index1 = index2;
+            } else {
+                break;
+            }
+        }
+        println!();
     }
 }
 
-fn get_x_by_y(table:&Vec<Vec<i64>>, index:usize) -> Option<usize> {
+fn get_x_by_y(table:&Vec<Vec<i64>>, row_index:usize) -> Option<usize> {
     let is_max = |value, relay| -> bool {
         relay<value
     };
 
-    if let Some((hit_index, _value)) = each_cell_type3(&table, index, std::i64::MIN, is_max) {
+    // インデックスの配列を作ります。
+    let mut index_array : Vec<usize> = (0..table[row_index].len()).collect();
+
+    // シャッフルします。
+    let mut rng = rand::thread_rng();
+    index_array.shuffle(&mut rng);
+
+    // 長さを縮めます。
+    let rate = 0.8;
+    if 10 < index_array.len() {
+        let new_len = (index_array.len() as f64 * rate) as usize;
+        index_array.resize_with(new_len, Default::default);
+    }
+
+    if let Some((hit_index, _value)) = each_cell_type4(&table[row_index], &index_array, std::i64::MIN, is_max) {
         Some(hit_index)
     } else {
         None
@@ -114,6 +140,12 @@ fn get_input_2_kana_vec(multibyte_hiragana:&Vec<char>, multibyte_katakana:&Vec<c
 
         // Excludes trailing newlines.
         line = line.trim().parse().expect("info Failed: stdin parse.");
+
+        if line.len() == 0 {
+            // 空打ち。
+            let empty : Vec<(char,char)> = Vec::new();
+            return empty;
+        }
 
         let two_kanas_vec = get_2_kana_vec(&multibyte_hiragana, &multibyte_katakana, &line);
 
@@ -259,15 +291,33 @@ fn each_cell_type1<F, G, H>(table:&Vec<Vec<i64>>, before_row:F, get_cell:G, afte
     }
 }
 
-fn each_cell_type3<F>(table:&Vec<Vec<i64>>, index:usize, init_value:i64, callback:F) -> Option<(usize, i64)>
+/*
+fn each_cell_type3<F>(table:&Vec<Vec<i64>>, row_index:usize, init_value:i64, callback:F) -> Option<(usize, i64)>
     where F : Fn(i64, i64) -> bool {
 
     let mut hit : Option<(usize, i64)> = None;
     let mut relay = init_value;
-    for column in table[index].iter() {
+    for (c, column) in table[row_index].iter().enumerate() {
         if callback(*column, relay) {
             relay = *column;
-            hit = Some((index, *column));
+            hit = Some((c, *column));
+        }
+    }
+
+    hit
+}
+*/
+
+fn each_cell_type4<F>(row:&Vec<i64>, index_array:&Vec<usize>, init_value:i64, callback:F) -> Option<(usize, i64)>
+    where F : Fn(i64, i64) -> bool {
+
+    let mut hit : Option<(usize, i64)> = None;
+    let mut relay = init_value;
+    for c in index_array.iter() {
+        let column = row[*c];
+        if callback(column, relay) {
+            relay = column;
+            hit = Some((*c, column));
         }
     }
 
