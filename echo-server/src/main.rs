@@ -79,7 +79,7 @@ fn handle_client(stream: TcpStream) -> Result<(), Error> {
 
         line.clear();
 
-        // 改行で送信完了。
+        // 改行を付けないと、受信側が 受信完了しません。
         let msg = "poppo";
         println!("Write           | {}", msg);
         writer.write(format!("{}\n", msg).as_bytes())?;

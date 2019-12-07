@@ -7,7 +7,6 @@
  * [Struct tokio::net::TcpStream](https://docs.rs/tokio/0.2.3/tokio/net/struct.TcpStream.html)
  */
 use futures::executor::block_on;
-// use std::error::Error;
 use std::net::SocketAddr;
 use tokio::net::TcpStream;
 use tokio::prelude::*;
