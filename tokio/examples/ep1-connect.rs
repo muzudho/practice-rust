@@ -12,8 +12,9 @@ use tokio::net::TcpStream;
 fn main() {
     // Parse the address of whatever server we're talking to
     let addr: SocketAddr = "127.0.0.1:6142".parse().unwrap();
+    println!("Host            | {}", &addr);
 
-    let client = TcpStream::connect(&addr);
+    let _client = TcpStream::connect(&addr);
 
     println!("Info            | Finished.");
 }

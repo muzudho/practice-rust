@@ -23,14 +23,15 @@
  */
 use futures::executor::block_on;
 use std::net::SocketAddr;
-// use tokio::net::TcpStream;
 
 async fn connect() {
     // Sleep 3 seconds.
     println!("Info            | Please wait 1 seconds.");
     std::thread::sleep(std::time::Duration::from_secs(1));
 
+    // let addr: SocketAddr = "localhost:3000".parse().unwrap(); // v4 or v6?
     let addr: SocketAddr = "127.0.0.1:3000".parse().unwrap();
+    println!("Host            | {}", &addr);
 
     // https://docs.rs/tokio-tcp/0.1.2/src/tokio_tcp/stream.rs.html#49-58
     match tokio::net::TcpStream::connect(&addr).await {
