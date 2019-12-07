@@ -23,7 +23,7 @@
  */
 use futures::executor::block_on;
 use std::net::SocketAddr;
-use tokio::net::TcpStream;
+// use tokio::net::TcpStream;
 
 async fn connect() {
     // Sleep 3 seconds.
@@ -34,12 +34,12 @@ async fn connect() {
 
     // https://docs.rs/tokio-tcp/0.1.2/src/tokio_tcp/stream.rs.html#49-58
     match tokio::net::TcpStream::connect(&addr).await {
-        Ok(_stream) => {}
-        Err(e) => {} // println!("{:?}", e),
+        Ok(_stream) => {
+            // Following snippets come here...
+            println!("Info            | Connect end.");
+        }
+        Err(e) => println!("{:?}", e),
     };
-
-    // Following snippets come here...
-    // println!("Info            | Connect end.");
 }
 
 #[tokio::main]
@@ -47,8 +47,10 @@ async fn main() {
     println!("Info            | Please wait 1 seconds.");
     std::thread::sleep(std::time::Duration::from_secs(1));
 
-    block_on(connect()); // syncronized.
-                         // tokio::spawn(connect()); // asyncronized.
+    // syncronized.
+    block_on(connect());
+    // asyncronized.
+    // tokio::spawn(connect());
 
     // Sleep 9 seconds.
     println!("Info            | Please wait 3 seconds.");
