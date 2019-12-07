@@ -1,6 +1,9 @@
 // Person.toml は Cargo.toml が置いてあるディレクトリに置けだぜ☆（＾～＾）
 //
-// cd C:\Users\むずでょ\OneDrive\ドキュメント\practice-rust\toml
+// cd C:\Users\むずでょ\source\repos\practice-rust
+// cargo new toml
+//
+// C:\Users\むずでょ\source\repos\practice-rust\toml
 // cargo check
 // cargo build
 // cargo run

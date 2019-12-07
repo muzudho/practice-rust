@@ -1,0 +1,6 @@
+[package]
+name = "ex2_3_ArraysAndSlices"
+version = "0.1.0"
+authors = ["muzudho <muzudho1@gmail.com>"]
+
+[dependencies]
