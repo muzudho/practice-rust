@@ -9,6 +9,12 @@
 // See also:
 // https://crates.io/
 
+extern crate serde_derive;
+extern crate toml;
+
+mod config;
+// use config::*;
+
 fn main() {
     println!("Hello, world!");
 }

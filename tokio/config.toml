@@ -1,0 +1,4 @@
+[host]
+# v4 と v6 は区別します。localhost は環境依存です。
+domain = "127.0.0.1"
+port = 3000
