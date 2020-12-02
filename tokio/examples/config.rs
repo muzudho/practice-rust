@@ -6,12 +6,25 @@ use std::io::{BufReader, Read};
 #[derive(Debug, Deserialize)]
 pub struct Config {
     pub host: Option<Host>,
+    pub game: Option<Game>,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct Host {
     pub domain: Option<String>,
     pub port: Option<u16>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct Game {
+    pub player_number: Option<i32>,
+    pub player1_name: Option<String>,
+    pub player2_name: Option<String>,
+    pub first_color: Option<String>,
+    pub board_size: Option<i32>,
+    pub time_minutes: Option<i32>,
+    pub seconds_read: Option<i32>,
+    pub command_interval_msec: Option<u64>,
 }
 
 #[allow(dead_code)]

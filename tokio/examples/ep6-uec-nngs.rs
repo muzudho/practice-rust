@@ -17,7 +17,7 @@ use tokio::net::TcpStream;
 use tokio::prelude::*;
 
 async fn connect() {
-    match read_toml("./config-uec.toml".to_string()) {
+    match read_toml("./config-uec11.toml".to_string()) {
         Ok(conf) => {
             // v4 か v6 かはサーバー側と合わせること。名前解決はしないので、数で打ち込むこと。
             let host = conf.host.unwrap();
@@ -67,11 +67,14 @@ async fn connect() {
                                 // 末尾の改行をもって受信完了。
                                 match stream.read(&mut buffer[..]).await {
                                     Ok(size) => {
-                                        println!("Trace   | readSize=[{}]", size);
-                                        println!("Trace   | read=[{:?}]", &buffer[..size]);
+                                        // バイト・サイズ表示。
+                                        // println!("Trace   | readSize=[{}]", size);
+
+                                        // バイナリ表示。
+                                        // println!("Trace   | read=[{:?}]", &buffer[..size]);
 
                                         // サーバーから送られてくるのは Shift-JIS かも知れない。変換する。
-                                        let (cow, encoding_used, had_errors) =
+                                        let (cow, _encoding_used, _had_errors) =
                                             SHIFT_JIS.decode(&buffer[..size]);
                                         let utf8_text = format!("{}", &cow[..]);
                                         println!("Trace   | read=[{}]", utf8_text);

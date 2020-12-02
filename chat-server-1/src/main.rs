@@ -30,11 +30,11 @@ fn main() {
     match read_toml("./config.toml".to_string()) {
         Ok(config) => {
             let host = config.host.unwrap();
-            let hostText = format!("{}:{}", host.domain.unwrap(), host.port.unwrap());
-            println!("Host            | {}", hostText);
+            let host_text = format!("{}:{}", host.domain.unwrap(), host.port.unwrap());
+            println!("Host            | {}", host_text);
 
-            //Instanciate the server
-            let server = TcpListener::bind(&hostText).expect("Listener failet to bind.");
+            // サーバーの方は、ストリームを開くのではなく、リスナーをバインドするんだぜ☆（＾～＾）
+            let server = TcpListener::bind(&host_text).expect("Listener failet to bind.");
 
             //Set server in Non-blocking state to force it to hear for changes all the time.
             server
@@ -84,7 +84,7 @@ fn main() {
                                 println!("\nMSG as Bytes:   {:?}", msg.clone());
                                 let msg = String::from_utf8(msg).expect("Invalid utf8 message");
 
-                                println!("\n{}: {:?}", addr, msg);
+                                println!("\nRead            | {}: {:?}", addr, msg);
                                 sender.send(msg).expect("failed to send msg to reciever");
                             }
                             //Handle reading errors!

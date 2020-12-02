@@ -1,9 +1,0 @@
-# 第11回UECテスト・サーバー
-
-[host]
-# v4 と v6 は区別します。localhost は環境依存です。
-# nngs1.3-ize.jp:9696
-# domain = "nngs1.3-ize.jp"
-# Who is で IPアドレスを調べる。
-domain = "3.115.247.120"
-port = 9696
